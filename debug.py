@@ -1,36 +1,61 @@
-import grpc_requests
-from grpc_requests import Client
-from contracts.services.users import rpc_get_user_pb2 as get_user
-import contracts.services.users as user_service
+def example_formatting() -> None:
+    """
+    Примеры форматирования текста в docstring.
 
-# Подключаемся
-client = Client.get_by_endpoint("localhost:9003")
+    **Жирный текст** - для выделения важного.
 
-print("Доступные сервисы:")
-for service in client.service_names:
-    print(f"  - {service}")
+    *Курсив* или _курсив_ - для акцента.
 
-# Указываем сервис
-service_name = "contracts.services.gateway.users.UsersGatewayService"
+    ``Код в строке`` или `код` - для имен переменных, функций.
 
-# Получаем все методы
-methods_meta = client.get_methods_meta(service_name)
+    ::
 
-print(f"=== Методы для {service_name} ===")
-for method_name in methods_meta.keys():
-    print(f"  {method_name}")
+        # Блок кода (отступ 4 пробела или таб)
+        def example():
+            return "Hello, World!"
 
-# Выбираем первый метод из списка (если не знаем точное имя)
-# Или замените на конкретное имя, которое увидите в выводе
-first_method = list(methods_meta.keys())[0]
-print(f"\nПробуем вызвать метод: {first_method}")
+    .. code-block:: python
 
-# Отправляем запрос
-request_data = {"id": "31df9dce-bf3a-48c1-8b05-6b83e09b6cc9"}
+        # Подсвеченный блок кода
+        payload = {
+            "userId": "123",
+            "accountId": "456"
+        }
 
-try:
-    response = client.request(service_name, first_method, request_data)
-    print(f"\n=== Ответ ===")
-    print(response)
-except Exception as e:
-    print(f"Ошибка: {e}")
+    - Списки
+    - Через дефис
+    - Работают отлично
+
+    1. Нумерованные
+    2. списки
+    3. тоже поддерживаются
+
+    * item one
+    * item two
+    * item three
+
+    .. note::
+        Это заметка (note). Используется для дополнительной информации.
+
+    .. warning::
+        Это предупреждение (warning). Для важных предупреждений.
+
+    .. tip::
+        Это совет (tip). Для полезных советов.
+
+    .. important::
+        Это важная информация (important).
+
+    .. versionadded:: 1.0.0
+        Функция добавлена в версии 1.0.0
+
+    .. versionchanged:: 1.2.0
+        Изменено поведение в версии 1.2.0
+
+    .. deprecated:: 2.0.0
+        Функция устарела в версии 2.0.0
+
+    См. также :func:`make_top_up_operation_payload` для пополнения.
+
+    Ссылка на `документацию <https://example.com/docs>`_.
+    """

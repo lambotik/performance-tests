@@ -1,18 +1,20 @@
+import uuid
+
 import httpx
 from httpx import Response
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from performance_tests.clients.http.client import HTTPClient
 
 
 
 class CreateUserRequestDict(BaseModel):
-    email: str
-    lastName: str
-    firstName: str
-    middleName: str
-    phoneNumber: str
+    email: str = Field(default_factory=lambda: f"user.{uuid.uuid4()}@example.com")
+    lastName: str = "Doe"
+    firstName: str = "John"
+    middleName: str = "Alexander"
+    phoneNumber: str = "+79991234567"
 
 
 class UsersGatewayHTTPClient(HTTPClient):

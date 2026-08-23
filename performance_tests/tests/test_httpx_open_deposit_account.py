@@ -3,13 +3,16 @@ from performance_tests.conftest import *
 
 
 class TestHttpxApi:
-    def test_open_deposit_account(self, users, accounts):
+    def test_open_deposit_account(self, users: UsersGatewayHTTPClient, accounts: AccountsGatewayHTTPClient):
         create_user_response = users.post_create_user(DataPayload.user_create_payload())
         create_user_response_data = create_user_response.json()
         user_id = create_user_response_data["user"]["id"]
         open_deposit_account_response = accounts.post_open_deposit_account(user_id=user_id)
         assert open_deposit_account_response.status_code is 200
-
+        response_get_deposits_accounts = accounts.get_accounts_api({"userId": user_id})
+        assert response_get_deposits_accounts.status_code is 200
+        response_open_credit_account = accounts.post_open_credit_card_account(user_id=user_id)
+        assert response_open_credit_account.status_code is 200
 
     def test_create_virtual_card(self, users, accounts, cards):
         create_user_response = users.post_create_user(DataPayload.user_create_payload())
@@ -61,4 +64,3 @@ class TestHttpxApi:
         operation_id = response_make_purchase_operation.json()['operation']['id']
         response_receipt_operation = operations.get_receipt_operation(operation_id=operation_id)
         assert response_receipt_operation.status_code is 200
-        print(response_receipt_operation.json())
