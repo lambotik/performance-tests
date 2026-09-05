@@ -5,8 +5,9 @@ from httpx import Response, QueryParams
 from dotenv import load_dotenv
 
 from performance_tests.clients.http.client import HTTPClient
-from performance_tests.clients.http.gateway.models import GetAccountsQueryDict, OpenDepositAccountRequestDict, \
-    OpenSavingsAccountRequestDict, OpenDebitCardAccountRequestDict, OpenCreditCardAccountRequestDict
+from performance_tests.clients.http.gateway.accounts.schema import GetAccountsQuerySchema, \
+    OpenDepositAccountRequestSchema, OpenSavingsAccountRequestSchema, OpenDebitCardAccountRequestSchema, \
+    OpenCreditCardAccountRequestSchema
 
 load_dotenv()
 
@@ -29,7 +30,7 @@ class AccountsGatewayHTTPClient(HTTPClient):
         :param query: Словарь с параметрами запроса, например: {'userId': '123'}.
         :return: Объект Response с данными о счетах.
         """
-        validated_request = GetAccountsQueryDict(**query)
+        validated_request = GetAccountsQuerySchema(**query)
         return self.get(f"/api/v1/accounts", params=QueryParams(validated_request.model_dump()))
 
     def post_open_deposit_account_api(self, user_id: str) -> Response:
@@ -38,7 +39,7 @@ class AccountsGatewayHTTPClient(HTTPClient):
         :param user_id: 1722f0d4-576b-460e-ba51-6dbe1469f86e
         :return: Объект Response с результатом операции.
         """
-        payload = OpenDepositAccountRequestDict(userId=user_id).model_dump()
+        payload = OpenDepositAccountRequestSchema(userId=user_id).model_dump()
         return self.post('/api/v1/accounts/open-deposit-account', json=payload)
 
     def open_savings_account_api(self, user_id: str) -> Response:
@@ -47,7 +48,7 @@ class AccountsGatewayHTTPClient(HTTPClient):
         :param user_id:  1722f0d4-576b-460e-ba51-6dbe1469f86e
         :return: Объект Response.
         """
-        payload = OpenSavingsAccountRequestDict(userId=user_id).model_dump()
+        payload = OpenSavingsAccountRequestSchema(userId=user_id).model_dump()
         return self.post("/api/v1/accounts/open-savings-account", json=payload)
 
     def post_open_debit_card_account_api(self, user_id: str) -> Response:
@@ -56,7 +57,7 @@ class AccountsGatewayHTTPClient(HTTPClient):
         :param user_id:1722f0d4-576b-460e-ba51-6dbe1469f86e
         :return: Объект Response.
         """
-        payload = OpenDebitCardAccountRequestDict(userId=user_id).model_dump()
+        payload = OpenDebitCardAccountRequestSchema(userId=user_id).model_dump()
         return self.post('/api/v1/accounts/open-debit-card-account', json=payload)
 
     def post_open_credit_card_account_api(self, user_id: str) -> httpx.Response:
@@ -65,7 +66,7 @@ class AccountsGatewayHTTPClient(HTTPClient):
         :param user_id: 1722f0d4-576b-460e-ba51-6dbe1469f86e
         :return: Объект Response.
         """
-        payload = OpenCreditCardAccountRequestDict(userId=user_id).model_dump()
+        payload = OpenCreditCardAccountRequestSchema(userId=user_id).model_dump()
         return self.post('/api/v1/accounts/open-credit-card-account', json=payload)
 
 

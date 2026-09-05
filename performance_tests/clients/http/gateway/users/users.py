@@ -5,7 +5,8 @@ from httpx import Response
 from dotenv import load_dotenv
 
 from performance_tests.clients.http.client import HTTPClient
-from performance_tests.clients.http.gateway.models import DataPayload, CreateUserRequestDict, CreateUserResponseSchema
+from performance_tests.clients.http.gateway.payload_data import DataPayload
+from performance_tests.clients.http.gateway.users.schema import CreateUserResponseSchema, CreateUserRequestSchema
 
 load_dotenv()
 
@@ -32,7 +33,7 @@ class UsersGatewayHTTPClient(HTTPClient):
         :param payload: Словарь с данными нового пользователя.
         :return: Ответ от сервера (объект Response).
         """
-        validated_request = CreateUserRequestDict(**payload)
+        validated_request = CreateUserRequestSchema(**payload)
         return self.post('/api/v1/users', json=validated_request.model_dump())
 
     def create_user(self) -> CreateUserResponseSchema:

@@ -1,9 +1,11 @@
-from performance_tests.clients.http.gateway.models import DataPayload
+from performance_tests.clients.http.gateway.payload_data import DataPayload
 from performance_tests.conftest import *
 
 
 class TestHttpxApi:
-    def test_open_deposit_account(self, users: UsersGatewayHTTPClient, accounts: AccountsGatewayHTTPClient):
+    def test_open_deposit_account(self,
+                                  users: UsersGatewayHTTPClient,
+                                  accounts: AccountsGatewayHTTPClient):
         create_user_response = users.post_create_user_api(DataPayload.user_create_payload())
         create_user_response_data = create_user_response.json()
         user_id = create_user_response_data["user"]["id"]
@@ -14,7 +16,10 @@ class TestHttpxApi:
         response_open_credit_account = accounts.post_open_credit_card_account_api(user_id=user_id)
         assert response_open_credit_account.status_code is 200
 
-    def test_create_virtual_card(self, users, accounts, cards):
+    def test_create_virtual_card(self,
+                                 users: UsersGatewayHTTPClient,
+                                 accounts: AccountsGatewayHTTPClient,
+                                 cards: CardsGatewayHTTPClient):
         create_user_response = users.post_create_user_api(DataPayload.user_create_payload())
         assert create_user_response.status_code is 200, 'User is not created'
         create_user_response_data = create_user_response.json()
@@ -26,7 +31,10 @@ class TestHttpxApi:
             DataPayload.open_virtual_card_payload(user_id=user_id, account_id=account_id))
         assert create_virtual_card_response.status_code is 200, 'Virtual card is not created'
 
-    def test_get_document(self, users, accounts, documents):
+    def test_get_document(self,
+                          users: UsersGatewayHTTPClient,
+                          accounts: AccountsGatewayHTTPClient,
+                          documents: DocumentsGatewayHTTPClient):
         create_user_response = users.post_create_user_api(DataPayload.user_create_payload())
         assert create_user_response.status_code is 200, 'User is not created'
         user_id = create_user_response.json()["user"]["id"]
@@ -38,34 +46,39 @@ class TestHttpxApi:
         response_get_contract_document = documents.get_contract_document_api(account_id)
         assert response_get_contract_document.status_code is 200
 
-    def test_make_top_up_operation(self, users, accounts, operations):
+    def test_make_top_up_operation(self,
+                                   users: UsersGatewayHTTPClient,
+                                   accounts: AccountsGatewayHTTPClient,
+                                   operations: OperationsGatewayHTTPClient):
         create_user_response = users.post_create_user_api(DataPayload.user_create_payload())
         assert create_user_response.status_code is 200, 'User is not created'
         user_id = create_user_response.json()["user"]["id"]
         response_open_debit_card_account = accounts.post_open_debit_card_account_api(user_id=user_id)
         card_id = response_open_debit_card_account.json()["account"]["cards"][0]["id"]
         account_id = response_open_debit_card_account.json()["account"]["id"]
-        response_make_top_up_operation = operations.make_top_up_operation_api(
-            DataPayload.make_top_up_operation_payload(card_id=card_id, account_id=account_id))
-        assert response_make_top_up_operation.status_code is 200
+        operations.make_top_up_operation(card_id=card_id, account_id=account_id)
 
-    def test_make_purchase_operation(self, users, accounts, operations):
+    def test_make_purchase_operation(self,
+                                     users: UsersGatewayHTTPClient,
+                                     accounts: AccountsGatewayHTTPClient,
+                                     operations: OperationsGatewayHTTPClient):
         create_user_response = users.post_create_user_api(DataPayload.user_create_payload())
         assert create_user_response.status_code is 200, 'User is not created'
         user_id = create_user_response.json()["user"]["id"]
         response_open_debit_card_account = accounts.post_open_debit_card_account_api(user_id=user_id)
         card_id = response_open_debit_card_account.json()["account"]["cards"][0]["id"]
         account_id = response_open_debit_card_account.json()["account"]["id"]
-        response_make_purchase_operation = operations.make_purchase_operation_api(
-            DataPayload.make_purchase_operation_payload(
-                card_id=card_id,
-                account_id=account_id,
-                category='taxi'))
-        operation_id = response_make_purchase_operation.json()['operation']['id']
+        response_make_purchase_operation = operations.make_purchase_operation(
+            card_id=card_id,
+            account_id=account_id)
+        operation_id = response_make_purchase_operation.operation.id
         response_receipt_operation = operations.get_operation_receipt_api(operation_id=operation_id)
         assert response_receipt_operation.status_code is 200
 
-    def test_client_get_documents(self, users, accounts, documents):
+    def test_client_get_documents(self,
+                                  users: UsersGatewayHTTPClient,
+                                  accounts: AccountsGatewayHTTPClient,
+                                  documents: DocumentsGatewayHTTPClient):
         create_user_response = users.create_user()
         print('Create user response:', create_user_response)
         assert create_user_response['user'] != {}
@@ -88,18 +101,16 @@ class TestHttpxApi:
         assert str(get_contract_document_response) == '<Response [200 OK]>'
         print('Get contract document response:', get_contract_document_response)
 
-    def test_client_make_top_up_operation(self, users, accounts, operations):
+    def test_client_make_top_up_operation(self, users: UsersGatewayHTTPClient,
+                                          accounts: AccountsGatewayHTTPClient,
+                                          operations: OperationsGatewayHTTPClient):
         create_user_response = users.create_user()
         print('Create user response:', create_user_response)
         open_debit_card_account_response = accounts.post_open_debit_card_account_api(
             user_id=create_user_response['user']['id']
         )
         print('Open debit card account response:', open_debit_card_account_response)
-        make_top_up_operation_payload = {
-            'status': "COMPLETED",
-            'amount': 1500.11,
-            'cardId': open_debit_card_account_response.json()['account']['cards'][0]['id'],
-            'accountId': open_debit_card_account_response.json()['account']['id']
-        }
-        make_top_up_operation_response = operations.make_top_up_operation_api(make_top_up_operation_payload)
+        card_id = open_debit_card_account_response.json()['account']['cards'][0]['id']
+        account_id = open_debit_card_account_response.json()['account']['id']
+        make_top_up_operation_response = operations.make_cashback_operation(card_id, account_id)
         print('Make top up operation response:', make_top_up_operation_response)

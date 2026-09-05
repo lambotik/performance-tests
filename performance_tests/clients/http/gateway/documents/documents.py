@@ -1,15 +1,19 @@
-import os
-
 import httpx
 from httpx import Response
-from dotenv import load_dotenv
 
 from performance_tests.clients.http.client import HTTPClient
-
-load_dotenv()
+from performance_tests.clients.http.client import build_gateway_http_client
+from performance_tests.clients.http.gateway.documents.schema import (
+    GetTariffDocumentResponseSchema,
+    GetContractDocumentResponseSchema
+)
 
 
 class DocumentsGatewayHTTPClient(HTTPClient):
+    """
+    Клиент для взаимодействия с /api/v1/documents сервиса http-gateway.
+    """
+
     def __init__(self, base_url: str):
         super().__init__(base_url)
         if not base_url:
@@ -20,18 +24,28 @@ class DocumentsGatewayHTTPClient(HTTPClient):
     def get_tariff_document_api(self, account_id: str) -> Response:
         """
         Получить тарифа по счету.
+
         :param account_id: Идентификатор счета.
-        :return: Ответ от сервера (объект Response).
+        :return: Ответ от сервера (объект httpx.Response).
         """
         return self.get(f"/api/v1/documents/tariff-document/{account_id}")
 
     def get_contract_document_api(self, account_id: str) -> Response:
         """
         Получить контракта по счету.
+
         :param account_id: Идентификатор счета.
-        :return: Ответ от сервера (объект Response).
+        :return: Ответ от сервера (объект httpx.Response).
         """
         return self.get(f"/api/v1/documents/contract-document/{account_id}")
+
+    def get_tariff_document(self, account_id: str) -> GetTariffDocumentResponseSchema:
+        response = self.get_tariff_document_api(account_id)
+        return GetTariffDocumentResponseSchema.model_validate_json(response.text)
+
+    def get_contract_document(self, account_id: str) -> GetContractDocumentResponseSchema:
+        response = self.get_contract_document_api(account_id)
+        return GetContractDocumentResponseSchema.model_validate_json(response.text)
 
 
 def build_documents_gateway_http_client() -> DocumentsGatewayHTTPClient:
@@ -40,4 +54,4 @@ def build_documents_gateway_http_client() -> DocumentsGatewayHTTPClient:
 
     :return: Готовый к использованию DocumentsGatewayHTTPClient.
     """
-    return DocumentsGatewayHTTPClient(base_url=os.getenv("LOCAL_GATEWAY_HTTP_CLIENT.HOST"))
+    return DocumentsGatewayHTTPClient(client=build_gateway_http_client())

@@ -1,7 +1,5 @@
-import uuid
 from typing import Dict, Any
-
-from pydantic import BaseModel, Field, EmailStr
+from performance_tests.clients.http.gateway.users.schema import CreateUserRequestSchema
 
 
 class DataPayload:
@@ -19,7 +17,7 @@ class DataPayload:
         дефолтные значения для остальных полей.
         :return: Словарь с данными пользователя, готовый к отправке в API.
         """
-        payload = CreateUserRequestDict()
+        payload = CreateUserRequestSchema()
         return payload.model_dump()
 
     @staticmethod
@@ -97,88 +95,12 @@ class DataPayload:
         }
 
 
-class User(BaseModel):
-    id: uuid.UUID = Field(..., description="User identifier")
-    email: EmailStr = Field(..., description="User email")
-    lastName: str = Field(..., description="Last name")
-    firstName: str = Field(..., description="First name")
-    middleName: str = Field(..., description="Middle name")
-    phoneNumber: str = Field(..., description="Phone number")
 
 
-class CreateUserResponseSchema(BaseModel):
-    user: User
 
 
-class CreateUserRequestDict(BaseModel):
-    email: str = Field(default_factory=lambda: f"user.{uuid.uuid4()}@example.com")
-    lastName: str = "Doe"
-    firstName: str = "John"
-    middleName: str = "Alexander"
-    phoneNumber: str = "+79991234567"
 
 
-class MakePurchaseOperationRequestDict(BaseModel):
-    status: str
-    amount: int | float
-    cardId: str
-    accountId: str
-    category: str
 
 
-class MakeTopUpOperationRequestDict(BaseModel):
-    status: str
-    amount: int | float
-    cardId: str
-    accountId: str
 
-
-class IssueVirtualCardRequestDict(BaseModel):
-    """
-    Структура данных для выпуска виртуальной карты.
-    """
-    userId: str
-    accountId: str
-
-
-class IssuePhysicalCardRequestDict(BaseModel):
-    """
-    Структура данных для выпуска физической карты.
-    """
-    userId: str
-    accountId: str
-
-
-class GetAccountsQueryDict(BaseModel):
-    """
-    Структура данных для получения списка счетов пользователя.
-    """
-    userId: str
-
-
-class OpenDepositAccountRequestDict(BaseModel):
-    """
-    Структура данных для открытия депозитного счета.
-    """
-    userId: str
-
-
-class OpenSavingsAccountRequestDict(BaseModel):
-    """
-    Структура данных для открытия сберегательного счета.
-    """
-    userId: str
-
-
-class OpenDebitCardAccountRequestDict(BaseModel):
-    """
-    Структура данных для открытия дебетового счета.
-    """
-    userId: str
-
-
-class OpenCreditCardAccountRequestDict(BaseModel):
-    """
-    Структура данных для открытия кредитного счета.
-    """
-    userId: str
