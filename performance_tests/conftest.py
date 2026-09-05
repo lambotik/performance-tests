@@ -30,19 +30,12 @@ def api_client_factory():
 
 
 @pytest.fixture
-def users(api_client_factory):
-    """Фикстура для клиента пользователей"""
-    client = api_client_factory("users")
-    yield client
-    client.close()
-
-
-@pytest.fixture
 def accounts(api_client_factory):
     """Фикстура для клиента аккаунтов"""
     client = api_client_factory("accounts")
     yield client
     client.close()
+
 
 @pytest.fixture
 def cards(api_client_factory):
@@ -59,9 +52,18 @@ def documents(api_client_factory):
     yield client
     client.close()
 
+
 @pytest.fixture
 def operations(api_client_factory):
     """Фикстура для клиента операций"""
     client = api_client_factory("operations")
+    yield client
+    client.close()
+
+
+@pytest.fixture
+def users(api_client_factory):
+    """Фикстура для клиента пользователей"""
+    client = api_client_factory("users")
     yield client
     client.close()

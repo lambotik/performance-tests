@@ -1,23 +1,14 @@
+import os
+
 import httpx
 from httpx import Response
-from pydantic import BaseModel
+from dotenv import load_dotenv
 
 from performance_tests.clients.http.client import HTTPClient
+from performance_tests.clients.http.gateway.models import MakeTopUpOperationRequestDict, \
+    MakePurchaseOperationRequestDict
 
-
-class MakePurchaseOperationRequestDict(BaseModel):
-    status: str
-    amount: int | float
-    cardId: str
-    accountId: str
-    category: str
-
-
-class MakeTopUpOperationRequestDict(BaseModel):
-    status: str
-    amount: int | float
-    cardId: str
-    accountId: str
+load_dotenv()
 
 
 class OperationsGatewayHTTPClient(HTTPClient):
@@ -72,6 +63,12 @@ class OperationsGatewayHTTPClient(HTTPClient):
         """
         Создаёт операцию пополнения счёта.
         :param payload: Тело запроса с параметрами операции.
+        {
+        status: str
+        amount: int | float
+        cardId: str
+        accountId: str
+        }
         :return: Объект Response с результатом операции.
         """
         validated_request = MakeTopUpOperationRequestDict(**payload)
@@ -117,3 +114,12 @@ class OperationsGatewayHTTPClient(HTTPClient):
         :return: Объект Response с результатом операции.
         """
         return self.post("/api/v1/operations/make-cash-withdrawal-operation", json=payload)
+
+
+def build_documents_gateway_http_client() -> OperationsGatewayHTTPClient:
+    """
+    Функция создаёт экземпляр DocumentsGatewayHTTPClient с уже настроенным HTTP-клиентом.
+
+    :return: Готовый к использованию DocumentsGatewayHTTPClient.
+    """
+    return OperationsGatewayHTTPClient(base_url=os.getenv("LOCAL_GATEWAY_HTTP_CLIENT.HOST"))

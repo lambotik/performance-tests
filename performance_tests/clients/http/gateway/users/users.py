@@ -1,20 +1,13 @@
-import uuid
+import os
 
 import httpx
 from httpx import Response
-
-from pydantic import BaseModel, Field
+from dotenv import load_dotenv
 
 from performance_tests.clients.http.client import HTTPClient
+from performance_tests.clients.http.gateway.models import DataPayload, CreateUserRequestDict, CreateUserResponseSchema
 
-
-
-class CreateUserRequestDict(BaseModel):
-    email: str = Field(default_factory=lambda: f"user.{uuid.uuid4()}@example.com")
-    lastName: str = "Doe"
-    firstName: str = "John"
-    middleName: str = "Alexander"
-    phoneNumber: str = "+79991234567"
+load_dotenv()
 
 
 class UsersGatewayHTTPClient(HTTPClient):
@@ -33,7 +26,7 @@ class UsersGatewayHTTPClient(HTTPClient):
         """
         return self.get(f"/api/v1/users/{user_id}")
 
-    def post_create_user(self, payload: dict) -> Response:
+    def post_create_user_api(self, payload: dict) -> Response:
         """
         Создание нового пользователя.
         :param payload: Словарь с данными нового пользователя.
@@ -41,3 +34,18 @@ class UsersGatewayHTTPClient(HTTPClient):
         """
         validated_request = CreateUserRequestDict(**payload)
         return self.post('/api/v1/users', json=validated_request.model_dump())
+
+    def create_user(self) -> CreateUserResponseSchema:
+        response = self.post_create_user_api(DataPayload.user_create_payload())
+        if response.status_code != 200:  # или 200, в зависимости от API
+            raise ValueError(f"API returned error: {response.status_code} - {response.text}")
+        return response.json()
+
+
+def build_users_gateway_http_client() -> UsersGatewayHTTPClient:
+    """
+    Функция создаёт экземпляр UsersGatewayHTTPClient с уже настроенным HTTP-клиентом.
+
+    :return: Готовый к использованию UsersGatewayHTTPClient.
+    """
+    return UsersGatewayHTTPClient(base_url=os.getenv("LOCAL_GATEWAY_HTTP_CLIENT.HOST"))

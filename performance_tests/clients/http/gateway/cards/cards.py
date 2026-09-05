@@ -1,23 +1,12 @@
+import os
+
 import httpx
 from httpx import Response
-from pydantic import BaseModel
 from performance_tests.clients.http.client import HTTPClient
+from performance_tests.clients.http.gateway.models import IssuePhysicalCardRequestDict
+from dotenv import load_dotenv
 
-
-class IssueVirtualCardRequestDict(BaseModel):
-    """
-    Структура данных для выпуска виртуальной карты.
-    """
-    userId: str
-    accountId: str
-
-
-class IssuePhysicalCardRequestDict(BaseModel):
-    """
-    Структура данных для выпуска физической карты.
-    """
-    userId: str
-    accountId: str
+load_dotenv()
 
 
 class CardsGatewayHTTPClient(HTTPClient):
@@ -28,7 +17,7 @@ class CardsGatewayHTTPClient(HTTPClient):
         self.base_url = base_url.rstrip('/')
         self.client = httpx.Client(base_url=self.base_url, timeout=5.0)
 
-    def post_open_virtual_card(self, payload: dict) -> Response:
+    def post_open_virtual_card_api(self, payload: dict) -> Response:
         """
         Выпуск виртуальной карты.
         :param payload: Словарь с данными для выпуска виртуальной карты.
@@ -45,3 +34,12 @@ class CardsGatewayHTTPClient(HTTPClient):
         """
         validated_request = IssuePhysicalCardRequestDict(**payload)
         return self.post("/api/v1/cards/issue-physical-card", json=validated_request.model_dump())
+
+
+def build_cards_gateway_http_client() -> CardsGatewayHTTPClient:
+    """
+    Функция создаёт экземпляр CardsGatewayHTTPClient с уже настроенным HTTP-клиентом.
+
+    :return: Готовый к использованию CardsGatewayHTTPClient.
+    """
+    return CardsGatewayHTTPClient(base_url=os.getenv("LOCAL_GATEWAY_HTTP_CLIENT.HOST"))

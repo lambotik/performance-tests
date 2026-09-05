@@ -1,43 +1,14 @@
+import os
+
 import httpx
 from httpx import Response, QueryParams
-from pydantic import BaseModel
+from dotenv import load_dotenv
 
 from performance_tests.clients.http.client import HTTPClient
+from performance_tests.clients.http.gateway.models import GetAccountsQueryDict, OpenDepositAccountRequestDict, \
+    OpenSavingsAccountRequestDict, OpenDebitCardAccountRequestDict, OpenCreditCardAccountRequestDict
 
-
-class GetAccountsQueryDict(BaseModel):
-    """
-    Структура данных для получения списка счетов пользователя.
-    """
-    userId: str
-
-
-class OpenDepositAccountRequestDict(BaseModel):
-    """
-    Структура данных для открытия депозитного счета.
-    """
-    userId: str
-
-
-class OpenSavingsAccountRequestDict(BaseModel):
-    """
-    Структура данных для открытия сберегательного счета.
-    """
-    userId: str
-
-
-class OpenDebitCardAccountRequestDict(BaseModel):
-    """
-    Структура данных для открытия дебетового счета.
-    """
-    userId: str
-
-
-class OpenCreditCardAccountRequestDict(BaseModel):
-    """
-    Структура данных для открытия кредитного счета.
-    """
-    userId: str
+load_dotenv()
 
 
 class AccountsGatewayHTTPClient(HTTPClient):
@@ -61,7 +32,7 @@ class AccountsGatewayHTTPClient(HTTPClient):
         validated_request = GetAccountsQueryDict(**query)
         return self.get(f"/api/v1/accounts", params=QueryParams(validated_request.model_dump()))
 
-    def post_open_deposit_account(self, user_id: str) -> Response:
+    def post_open_deposit_account_api(self, user_id: str) -> Response:
         """
         Выполняет POST-запрос для открытия депозитного счёта.
         :param user_id: 1722f0d4-576b-460e-ba51-6dbe1469f86e
@@ -79,7 +50,7 @@ class AccountsGatewayHTTPClient(HTTPClient):
         payload = OpenSavingsAccountRequestDict(userId=user_id).model_dump()
         return self.post("/api/v1/accounts/open-savings-account", json=payload)
 
-    def post_open_debit_card_account(self, user_id: str) -> Response:
+    def post_open_debit_card_account_api(self, user_id: str) -> Response:
         """
         Выполняет POST-запрос для открытия дебетовой карты.
         :param user_id:1722f0d4-576b-460e-ba51-6dbe1469f86e
@@ -88,7 +59,7 @@ class AccountsGatewayHTTPClient(HTTPClient):
         payload = OpenDebitCardAccountRequestDict(userId=user_id).model_dump()
         return self.post('/api/v1/accounts/open-debit-card-account', json=payload)
 
-    def post_open_credit_card_account(self, user_id: str) -> httpx.Response:
+    def post_open_credit_card_account_api(self, user_id: str) -> httpx.Response:
         """
         Выполняет POST-запрос для открытия кредитной карты.
         :param user_id: 1722f0d4-576b-460e-ba51-6dbe1469f86e
@@ -96,3 +67,12 @@ class AccountsGatewayHTTPClient(HTTPClient):
         """
         payload = OpenCreditCardAccountRequestDict(userId=user_id).model_dump()
         return self.post('/api/v1/accounts/open-credit-card-account', json=payload)
+
+
+def build_accounts_gateway_http_client() -> AccountsGatewayHTTPClient:
+    """
+    Функция создаёт экземпляр AccountsGatewayHTTPClient с уже настроенным HTTP-клиентом.
+
+    :return: Готовый к использованию AccountsGatewayHTTPClient.
+    """
+    return AccountsGatewayHTTPClient(base_url=os.getenv("LOCAL_GATEWAY_HTTP_CLIENT.HOST"))

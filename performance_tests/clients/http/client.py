@@ -1,8 +1,7 @@
-#users.py
-from typing import Optional, Dict, Any
+from typing import Dict, Any
 
 import httpx
-from httpx import URL, QueryParams, Response
+from httpx import URL, QueryParams, Response, Client
 
 
 class HTTPClient:
@@ -44,3 +43,10 @@ class HTTPClient:
     def close(self):
         if hasattr(self, 'client'):
             self.client.close()
+
+def build_gateway_http_client() -> Client:
+    """
+    Функция создаёт экземпляр httpx.Client с базовыми настройками для сервиса http-gateway.
+    :return: Готовый к использованию объект httpx.Client.
+    """
+    return Client()

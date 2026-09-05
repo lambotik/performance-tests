@@ -1,7 +1,12 @@
+import os
+
 import httpx
 from httpx import Response
+from dotenv import load_dotenv
 
 from performance_tests.clients.http.client import HTTPClient
+
+load_dotenv()
 
 
 class DocumentsGatewayHTTPClient(HTTPClient):
@@ -27,3 +32,12 @@ class DocumentsGatewayHTTPClient(HTTPClient):
         :return: Ответ от сервера (объект Response).
         """
         return self.get(f"/api/v1/documents/contract-document/{account_id}")
+
+
+def build_documents_gateway_http_client() -> DocumentsGatewayHTTPClient:
+    """
+    Функция создаёт экземпляр DocumentsGatewayHTTPClient с уже настроенным HTTP-клиентом.
+
+    :return: Готовый к использованию DocumentsGatewayHTTPClient.
+    """
+    return DocumentsGatewayHTTPClient(base_url=os.getenv("LOCAL_GATEWAY_HTTP_CLIENT.HOST"))
