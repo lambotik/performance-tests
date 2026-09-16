@@ -1,5 +1,9 @@
+from performance_tests.clients.http.gateway.accounts.accounts import build_accounts_gateway_http_client
 from performance_tests.clients.http.gateway.payload_data import DataPayload
+from performance_tests.clients.http.gateway.users.users import build_users_gateway_http_client
 from performance_tests.conftest import *
+from performance_tests.grpcio_get_user import create_user_response
+from performance_tests.grpcio_open_debit_card_account import open_debit_card_account_response
 
 
 class TestHttpxApi:
@@ -25,6 +29,7 @@ class TestHttpxApi:
         create_user_response_data = create_user_response.json()
         user_id = create_user_response_data["user"]["id"]
         open_debit_card_account_response = accounts.post_open_debit_card_account_api(user_id=user_id)
+        print(open_debit_card_account_response.status_code, open_debit_card_account_response.text)
         account_id = open_debit_card_account_response.json()["account"]["id"]
         assert open_debit_card_account_response.status_code is 200, 'Debit card is not created'
         create_virtual_card_response = cards.post_open_virtual_card_api(

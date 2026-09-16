@@ -43,4 +43,4 @@ def build_cards_gateway_http_client() -> CardsGatewayHTTPClient:
 
     :return: Готовый к использованию CardsGatewayHTTPClient.
     """
-    return CardsGatewayHTTPClient(base_url=os.getenv("LOCAL_GATEWAY_HTTP_CLIENT.HOST"))
+    return CardsGatewayHTTPClient(base_url='http://localhost:8003')

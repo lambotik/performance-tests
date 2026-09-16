@@ -2,6 +2,7 @@ import time
 
 from faker import Faker
 from faker.providers.python import TEnum
+from google.protobuf.internal.enum_type_wrapper import EnumTypeWrapper
 
 
 class Fake:
@@ -112,29 +113,14 @@ class Fake:
         """
         return self.float(1, 1000)
 
-    def proto_enum(self, value):
+    def proto_enum(self, value: EnumTypeWrapper) -> int:
         """
-        Выбирает случайное значение из Protobuf Enum.
+        Выбирает случайное значение из proto enum-типа.
 
-        :param value: Класс Protobuf Enum (например, OperationStatus).
-        :return: Случайное числовое значение (или элемент) из перечисления.
+        :param value: Proto enum-класс для генерации значения.
+        :return: Случайное значение из перечисления.
         """
-        # 1. Если это стандартный сгенерированный Protobuf enum (имеет DESCRIPTOR)
-        if hasattr(value, 'DESCRIPTOR'):
-            # Извлекаем числовые значения (number) из дескриптора
-            values = [v.number for v in value.DESCRIPTOR.values]
-            return self.faker.random_element(values)
-
-        # 2. Если это стандартный Python Enum (например, из библиотеки proto-plus или betterproto)
-        if hasattr(value, '__members__'):
-            return self.faker.random_element(list(value))
-
-        # 3. Фоллбэк: если это просто класс с целочисленными атрибутами
-        values = [v for k, v in vars(value).items() if not k.startswith('_') and isinstance(v, int)]
-        if values:
-            return self.faker.random_element(values)
-
-        raise ValueError(f"Не удалось извлечь значения из {value}")
+        return self.faker.random_element(value.values())
 
 
 # Создаем экземпляр класса Fake с использованием Faker

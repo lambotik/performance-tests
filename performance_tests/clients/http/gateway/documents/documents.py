@@ -54,4 +54,4 @@ def build_documents_gateway_http_client() -> DocumentsGatewayHTTPClient:
 
     :return: Готовый к использованию DocumentsGatewayHTTPClient.
     """
-    return DocumentsGatewayHTTPClient(client=build_gateway_http_client())
+    return DocumentsGatewayHTTPClient(base_url='http://localhost:8003')

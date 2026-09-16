@@ -49,4 +49,4 @@ def build_users_gateway_http_client() -> UsersGatewayHTTPClient:
 
     :return: Готовый к использованию UsersGatewayHTTPClient.
     """
-    return UsersGatewayHTTPClient(base_url=os.getenv("LOCAL_GATEWAY_HTTP_CLIENT.HOST"))
+    return UsersGatewayHTTPClient(base_url='http://localhost:8003')

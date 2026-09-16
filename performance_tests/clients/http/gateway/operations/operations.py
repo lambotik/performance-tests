@@ -249,4 +249,4 @@ def build_operations_gateway_http_client() -> OperationsGatewayHTTPClient:
 
     :return: Готовый к использованию OperationsGatewayHTTPClient.
     """
-    return OperationsGatewayHTTPClient(client=build_gateway_http_client())
+    return OperationsGatewayHTTPClient(base_url='http://localhost:8003')

@@ -76,4 +76,4 @@ def build_accounts_gateway_http_client() -> AccountsGatewayHTTPClient:
 
     :return: Готовый к использованию AccountsGatewayHTTPClient.
     """
-    return AccountsGatewayHTTPClient(base_url=os.getenv("LOCAL_GATEWAY_HTTP_CLIENT.HOST"))
+    return AccountsGatewayHTTPClient(base_url='http://localhost:8003')
