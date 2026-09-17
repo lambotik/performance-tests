@@ -1,4 +1,3 @@
-import httpx
 from httpx import Response
 
 from performance_tests.clients.http.client import HTTPClient
@@ -13,13 +12,6 @@ class DocumentsGatewayHTTPClient(HTTPClient):
     """
     Клиент для взаимодействия с /api/v1/documents сервиса http-gateway.
     """
-
-    def __init__(self, base_url: str):
-        super().__init__(base_url)
-        if not base_url:
-            raise ValueError("base_url обязателен!")
-        self.base_url = base_url.rstrip('/')
-        self.client = httpx.Client(base_url=self.base_url, timeout=5.0)
 
     def get_tariff_document_api(self, account_id: str) -> Response:
         """
@@ -54,4 +46,4 @@ def build_documents_gateway_http_client() -> DocumentsGatewayHTTPClient:
 
     :return: Готовый к использованию DocumentsGatewayHTTPClient.
     """
-    return DocumentsGatewayHTTPClient(base_url='http://localhost:8003')
+    return DocumentsGatewayHTTPClient(build_gateway_http_client())

@@ -1,23 +1,14 @@
-import os
-
-import httpx
 from httpx import Response
-from dotenv import load_dotenv
 
-from performance_tests.clients.http.client import HTTPClient
+from performance_tests.clients.http.client import HTTPClient, build_gateway_http_client
 from performance_tests.clients.http.gateway.payload_data import DataPayload
 from performance_tests.clients.http.gateway.users.schema import CreateUserResponseSchema, CreateUserRequestSchema
 
-load_dotenv()
-
 
 class UsersGatewayHTTPClient(HTTPClient):
-    def __init__(self, base_url: str):
-        super().__init__(base_url)
-        if not base_url:
-            raise ValueError("base_url обязателен!")
-        self.base_url = base_url.rstrip('/')
-        self.client = httpx.Client(base_url=self.base_url, timeout=5.0)
+    """
+    Клиент для взаимодействия с /api/v1/users сервиса http-gateway.
+    """
 
     def get_user_api(self, user_id: str) -> Response:
         """
@@ -49,4 +40,4 @@ def build_users_gateway_http_client() -> UsersGatewayHTTPClient:
 
     :return: Готовый к использованию UsersGatewayHTTPClient.
     """
-    return UsersGatewayHTTPClient(base_url='http://localhost:8003')
+    return UsersGatewayHTTPClient(client=build_gateway_http_client())

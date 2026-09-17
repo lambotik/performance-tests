@@ -1,28 +1,16 @@
-import os
-
 import httpx
 from httpx import Response, QueryParams
-from dotenv import load_dotenv
 
-from performance_tests.clients.http.client import HTTPClient
+from performance_tests.clients.http.client import HTTPClient, build_gateway_http_client
 from performance_tests.clients.http.gateway.accounts.schema import GetAccountsQuerySchema, \
     OpenDepositAccountRequestSchema, OpenSavingsAccountRequestSchema, OpenDebitCardAccountRequestSchema, \
     OpenCreditCardAccountRequestSchema
-
-load_dotenv()
 
 
 class AccountsGatewayHTTPClient(HTTPClient):
     """
     Клиент для взаимодействия с /api/v1/accounts сервиса http-gateway.
     """
-
-    def __init__(self, base_url: str):
-        super().__init__(base_url)
-        if not base_url:
-            raise ValueError("base_url обязателен!")
-        self.base_url = base_url.rstrip('/')
-        self.client = httpx.Client(base_url=self.base_url, timeout=5.0)
 
     def get_accounts_api(self, query: dict) -> Response:
         """
@@ -76,4 +64,4 @@ def build_accounts_gateway_http_client() -> AccountsGatewayHTTPClient:
 
     :return: Готовый к использованию AccountsGatewayHTTPClient.
     """
-    return AccountsGatewayHTTPClient(base_url='http://localhost:8003')
+    return AccountsGatewayHTTPClient(build_gateway_http_client())

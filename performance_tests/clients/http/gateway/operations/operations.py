@@ -1,6 +1,4 @@
-import httpx
 from httpx import Response, QueryParams
-from dotenv import load_dotenv
 
 from performance_tests.clients.http.client import HTTPClient, build_gateway_http_client
 from performance_tests.clients.http.gateway.operations.schema import MakePurchaseOperationRequestSchema, \
@@ -12,16 +10,8 @@ from performance_tests.clients.http.gateway.operations.schema import MakePurchas
     MakeCashbackOperationResponseSchema, MakeTransferOperationResponseSchema, MakePurchaseOperationResponseSchema, \
     MakeBillPaymentOperationResponseSchema, MakeCashWithdrawalOperationResponseSchema
 
-load_dotenv()
-
 
 class OperationsGatewayHTTPClient(HTTPClient):
-    def __init__(self, base_url: str):
-        super().__init__(base_url)
-        if not base_url:
-            raise ValueError("base_url обязателен!")
-        self.base_url = base_url.rstrip('/')
-        self.client = httpx.Client(base_url=self.base_url, timeout=5.0)
 
     def get_operation_api(self, operation_id: str) -> Response:
         """
@@ -249,4 +239,4 @@ def build_operations_gateway_http_client() -> OperationsGatewayHTTPClient:
 
     :return: Готовый к использованию OperationsGatewayHTTPClient.
     """
-    return OperationsGatewayHTTPClient(base_url='http://localhost:8003')
+    return OperationsGatewayHTTPClient(build_gateway_http_client())

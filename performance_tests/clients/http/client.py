@@ -1,52 +1,61 @@
-from typing import Dict, Any
+from typing import Any, TypedDict
 
-import httpx
-from httpx import URL, QueryParams, Response, Client
+from httpx import Client, Response, QueryParams, URL
+
+
+# Тип расширений, которые можно передать в запрос
+# В нашем случае мы используем только параметр "route", но можно добавить и другие
+class HTTPClientExtensions(TypedDict, total=False):
+    route: str
 
 
 class HTTPClient:
-    def __init__(self, base_url: str = None, headers: Dict = None):
-        self.base_url = base_url
-        self.client = httpx.Client(
-            base_url=base_url,
-            headers=headers or {},
-            timeout=30.0
-        )
+    """
+    Базовый HTTP API клиент, принимающий объект httpx.Client.
 
-    def request(self, method: str, endpoint: URL | str, **kwargs) -> Response:
-        """
-        :param method:
-        :param endpoint:
-        :param kwargs:
-        :return:
-        """
-        return self.client.request(method, endpoint, **kwargs)
+    :param client: экземпляр httpx.Client для выполнения HTTP-запросов
+    """
 
-    def get(self, endpoint: URL | str, params: QueryParams | None = None) -> Response:
+    def __init__(self, client: Client) -> None:
+        self.client = client
+
+    def get(
+            self,
+            url: str | URL,
+            params: QueryParams | None = None,
+            extensions: HTTPClientExtensions | None = None  # Добавили поддержку extensions
+    ) -> Response:
         """
         Выполняет GET-запрос.
-        :param endpoint: URL-адрес эндпоинта.
+
+        :param url: URL-адрес эндпоинта.
         :param params: GET-параметры запроса (например, ?key=value).
+        :param extensions: Дополнительные данные, передаваемые через HTTPX extensions.
         :return: Объект Response с данными ответа.
         """
-        return self.client.get(endpoint, params=params)
+        return self.client.get(url=url, params=params, extensions=extensions)  # Передаём extensions в httpx.Client
 
-    def post(self, endpoint: URL | str, json: Any | None = None) -> Response:
+    def post(
+            self,
+            url: str | URL,
+            json: Any | None = None,
+            extensions: HTTPClientExtensions | None = None  # Поддержка extensions для POST-запросов
+    ) -> Response:
         """
         Выполняет POST-запрос.
-        :param endpoint: URL-адрес эндпоинта.
+
+        :param url: URL-адрес эндпоинта.
         :param json: Данные в формате JSON.
+        :param extensions: Дополнительные данные, передаваемые через HTTPX extensions.
         :return: Объект Response с данными ответа.
         """
-        return self.client.post(endpoint, json=json)
+        return self.client.post(url=url, json=json, extensions=extensions)  # extensions передаётся в httpx.Client
 
-    def close(self):
-        if hasattr(self, 'client'):
-            self.client.close()
 
 def build_gateway_http_client() -> Client:
     """
     Функция создаёт экземпляр httpx.Client с базовыми настройками для сервиса http-gateway.
+
     :return: Готовый к использованию объект httpx.Client.
     """
-    return Client()
+    return Client(timeout=100, base_url="http://localhost:8003")
