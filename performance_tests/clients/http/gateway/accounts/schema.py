@@ -1,36 +1,41 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class GetAccountsQuerySchema(BaseModel):
     """
     Структура данных для получения списка счетов пользователя.
     """
-    userId: str
+    model_config = ConfigDict(populate_by_name=True)
+    user_id: str = Field(..., alias="userId", description="User Id")
 
 
 class OpenDepositAccountRequestSchema(BaseModel):
     """
     Структура данных для открытия депозитного счета.
     """
-    userId: str
+    model_config = ConfigDict(populate_by_name=True)
+    user_id: str = Field(..., alias="userId", description="User Id")
 
 
 class OpenSavingsAccountRequestSchema(BaseModel):
     """
     Структура данных для открытия сберегательного счета.
     """
-    userId: str
+    model_config = ConfigDict(populate_by_name=True)
+    user_id: str = Field(..., alias="userId", description="User Id")
 
 
 class OpenDebitCardAccountRequestSchema(BaseModel):
     """
     Структура данных для открытия дебетового счета.
     """
-    userId: str
+    model_config = ConfigDict(populate_by_name=True)
+    user_id: str = Field(..., alias="userId", description="User Id")
 
 
 class OpenCreditCardAccountRequestSchema(BaseModel):
     """
     Структура данных для открытия кредитного счета.
     """
-    userId: str
+    model_config = ConfigDict(populate_by_name=True)
+    user_id: str = Field(..., alias="userId", description="User Id")

@@ -1,13 +1,12 @@
-from performance_tests.clients.grpc.gateway.documents.client import build_documents_gateway_grpc_client
-from performance_tests.clients.http.client import build_gateway_http_client
 from performance_tests.clients.http.gateway.accounts.accounts import build_accounts_gateway_http_client, \
     AccountsGatewayHTTPClient
+from performance_tests.clients.http.gateway.accounts.schema import GetAccountsQuerySchema
 from performance_tests.clients.http.gateway.cards.cards import build_cards_gateway_http_client, CardsGatewayHTTPClient
+from performance_tests.clients.http.gateway.cards.schema import IssueVirtualCardRequestSchema
 from performance_tests.clients.http.gateway.documents.documents import DocumentsGatewayHTTPClient, \
     build_documents_gateway_http_client
 from performance_tests.clients.http.gateway.operations.operations import OperationsGatewayHTTPClient, \
     build_operations_gateway_http_client
-from performance_tests.clients.http.gateway.payload_data import DataPayload
 from performance_tests.clients.http.gateway.users.users import build_users_gateway_http_client, UsersGatewayHTTPClient
 
 
@@ -15,39 +14,34 @@ class TestHttpxApi:
     def test_open_deposit_account(self):
         users: UsersGatewayHTTPClient = build_users_gateway_http_client()
         accounts: AccountsGatewayHTTPClient = build_accounts_gateway_http_client()
-        create_user_response = users.post_create_user_api(DataPayload.user_create_payload())
-        create_user_response_data = create_user_response.json()
-        user_id = create_user_response_data["user"]["id"]
+        create_user_response = users.create_user()
+        user_id = create_user_response.user.id
         open_deposit_account_response = accounts.post_open_deposit_account_api(user_id=user_id)
-        assert open_deposit_account_response.status_code is 200
-        response_get_deposits_accounts = accounts.get_accounts_api({"userId": user_id})
-        assert response_get_deposits_accounts.status_code is 200
+        assert open_deposit_account_response.status_code == 200
+        response_get_deposits_accounts = accounts.get_accounts_api(query=GetAccountsQuerySchema(user_id=user_id))
+        assert response_get_deposits_accounts.status_code == 200
         response_open_credit_account = accounts.post_open_credit_card_account_api(user_id=user_id)
-        assert response_open_credit_account.status_code is 200
+        assert response_open_credit_account.status_code == 200
 
     def test_create_virtual_card(self):
         users: UsersGatewayHTTPClient = build_users_gateway_http_client()
         cards: CardsGatewayHTTPClient = build_cards_gateway_http_client()
         accounts: AccountsGatewayHTTPClient = build_accounts_gateway_http_client()
-        create_user_response = users.post_create_user_api(DataPayload.user_create_payload())
-        assert create_user_response.status_code is 200, 'User is not created'
-        create_user_response_data = create_user_response.json()
-        user_id = create_user_response_data["user"]["id"]
+        create_user_response = users.create_user()
+        user_id = create_user_response.user.id
+        print(user_id)
         open_debit_card_account_response = accounts.post_open_debit_card_account_api(user_id=user_id)
-        print(open_debit_card_account_response.status_code, open_debit_card_account_response.text)
         account_id = open_debit_card_account_response.json()["account"]["id"]
-        assert open_debit_card_account_response.status_code is 200, 'Debit card is not created'
-        create_virtual_card_response = cards.post_open_virtual_card_api(
-            DataPayload.open_virtual_card_payload(user_id=user_id, account_id=account_id))
+        assert open_debit_card_account_response.status_code == 200, 'Debit card is not created'
+        create_virtual_card_response = cards.post_open_virtual_card_api(user_id=user_id,account_id=account_id)
         assert create_virtual_card_response.status_code is 200, 'Virtual card is not created'
 
     def test_get_document(self):
         users: UsersGatewayHTTPClient = build_users_gateway_http_client()
         accounts: AccountsGatewayHTTPClient = build_accounts_gateway_http_client()
         documents: DocumentsGatewayHTTPClient = build_documents_gateway_http_client()
-        create_user_response = users.post_create_user_api(DataPayload.user_create_payload())
-        assert create_user_response.status_code is 200, 'User is not created'
-        user_id = create_user_response.json()["user"]["id"]
+        create_user_response = users.create_user()
+        user_id = create_user_response.user.id
         response_open_credit_card_account = accounts.post_open_credit_card_account_api(user_id)
         assert response_open_credit_card_account.status_code is 200
         account_id = response_open_credit_card_account.json()["account"]["id"]
@@ -60,9 +54,8 @@ class TestHttpxApi:
         users: UsersGatewayHTTPClient = build_users_gateway_http_client()
         accounts: AccountsGatewayHTTPClient = build_accounts_gateway_http_client()
         operations: OperationsGatewayHTTPClient = build_operations_gateway_http_client()
-        create_user_response = users.post_create_user_api(DataPayload.user_create_payload())
-        assert create_user_response.status_code is 200, 'User is not created'
-        user_id = create_user_response.json()["user"]["id"]
+        create_user_response = users.create_user()
+        user_id = create_user_response.user.id
         response_open_debit_card_account = accounts.post_open_debit_card_account_api(user_id=user_id)
         card_id = response_open_debit_card_account.json()["account"]["cards"][0]["id"]
         account_id = response_open_debit_card_account.json()["account"]["id"]
@@ -72,9 +65,8 @@ class TestHttpxApi:
         users: UsersGatewayHTTPClient = build_users_gateway_http_client()
         accounts: AccountsGatewayHTTPClient = build_accounts_gateway_http_client()
         operations: OperationsGatewayHTTPClient = build_operations_gateway_http_client()
-        create_user_response = users.post_create_user_api(DataPayload.user_create_payload())
-        assert create_user_response.status_code is 200, 'User is not created'
-        user_id = create_user_response.json()["user"]["id"]
+        create_user_response = users.create_user()
+        user_id = create_user_response.user.id
         response_open_debit_card_account = accounts.post_open_debit_card_account_api(user_id=user_id)
         card_id = response_open_debit_card_account.json()["account"]["cards"][0]["id"]
         account_id = response_open_debit_card_account.json()["account"]["id"]
@@ -91,10 +83,9 @@ class TestHttpxApi:
         documents: DocumentsGatewayHTTPClient = build_documents_gateway_http_client()
         create_user_response = users.create_user()
         print('Create user response:', create_user_response)
-        assert create_user_response['user'] != {}
 
         open_credit_card_account_response = accounts.post_open_credit_card_account_api(
-            user_id=create_user_response['user']['id']
+            user_id=create_user_response.user.id
         )
         assert str(open_credit_card_account_response) == '<Response [200 OK]>'
         print('Open credit card account response:', open_credit_card_account_response.json())
@@ -118,7 +109,7 @@ class TestHttpxApi:
         create_user_response = users.create_user()
         print('Create user response:', create_user_response)
         open_debit_card_account_response = accounts.post_open_debit_card_account_api(
-            user_id=create_user_response['user']['id']
+            user_id=create_user_response.user.id
         )
         print('Open debit card account response:', open_debit_card_account_response)
         card_id = open_debit_card_account_response.json()['account']['cards'][0]['id']

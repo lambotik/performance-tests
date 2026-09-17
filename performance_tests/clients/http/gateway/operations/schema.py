@@ -29,9 +29,9 @@ class OperationSchema(BaseModel):
     id: str
     type: OperationType
     status: OperationStatus
-    amount: float
+    amount: float = fake.amount()
     card_id: str = Field(alias="cardId")
-    category: str
+    category: str = fake.category()
     created_at: datetime = Field(alias="createdAt")
     account_id: str = Field(alias="accountId")
 

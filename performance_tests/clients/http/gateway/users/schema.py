@@ -1,10 +1,12 @@
 import uuid
 
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
+
+from performance_tests.tools.fakers import fake
 
 
 class User(BaseModel):
-    id: uuid.UUID = Field(..., description="User identifier")
+    id: str = Field(..., description="User identifier")
     email: EmailStr = Field(..., description="User email")
     last_name: str = Field(..., alias="lastName", description="Last name")
     first_name: str = Field(..., alias="firstName", description="First name")
@@ -17,8 +19,18 @@ class CreateUserResponseSchema(BaseModel):
 
 
 class CreateUserRequestSchema(BaseModel):
-    email: str = Field(default_factory=lambda: f"user.{uuid.uuid4()}@example.com")
-    lastName: str = "Doe"
-    firstName: str = "John"
-    middleName: str = "Alexander"
-    phoneNumber: str = "+79991234567"
+    """
+    Структура данных для создания нового пользователя.
+    """
+    model_config = ConfigDict(populate_by_name=True)
+
+    # Добавили генерацию случайного email
+    email: EmailStr = Field(default_factory=fake.email)
+    # Добавили генерацию случайной фамилии
+    last_name: str = Field(alias="lastName", default_factory=fake.last_name)
+    # Добавили генерацию случайного имени
+    first_name: str = Field(alias="firstName", default_factory=fake.first_name)
+    # Добавили генерацию случайного отчества
+    middle_name: str = Field(alias="middleName", default_factory=fake.middle_name)
+    # Добавили генерацию случайного номер телефона
+    phone_number: str = Field(alias="phoneNumber", default_factory=fake.phone_number)
