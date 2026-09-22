@@ -6,7 +6,7 @@ from performance_tests.tools.fakers import fake
 
 
 class User(BaseModel):
-    id: str = Field(..., description="User identifier")
+    id: uuid.UUID = Field(..., description="User identifier")
     email: EmailStr = Field(..., description="User email")
     last_name: str = Field(..., alias="lastName", description="Last name")
     first_name: str = Field(..., alias="firstName", description="First name")

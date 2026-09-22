@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import StrEnum
+from uuid import UUID
 
 from pydantic import BaseModel, Field, HttpUrl, ConfigDict
 
@@ -33,7 +34,7 @@ class OperationSchema(BaseModel):
     card_id: str = Field(alias="cardId")
     category: str = fake.category()
     created_at: datetime = Field(alias="createdAt")
-    account_id: str = Field(alias="accountId")
+    account_id: str | UUID = Field(alias="accountId")
 
 
 class OperationReceiptSchema(BaseModel):
@@ -107,8 +108,8 @@ class MakeOperationRequestSchema(BaseModel):
 
     status: OperationStatus = Field(default_factory=lambda: fake.enum(OperationStatus))
     amount: float = Field(default_factory=fake.amount)
-    card_id: str = Field(alias="cardId")
-    account_id: str = Field(alias="accountId")
+    card_id: str | UUID = Field(alias="cardId")
+    account_id: str | UUID = Field(alias="accountId")
 
 
 class MakeFeeOperationRequestSchema(MakeOperationRequestSchema):
