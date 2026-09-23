@@ -1,4 +1,5 @@
 import time
+from uuid import UUID
 
 from httpx import Response
 from locust.env import Environment
@@ -18,7 +19,7 @@ class UsersGatewayHTTPClient(HTTPClient):
     Клиент для взаимодействия с /api/v1/users сервиса http-gateway.
     """
 
-    def get_user_api(self, user_id: str) -> Response:
+    def get_user_api(self, user_id: str | UUID) -> Response:
         """
         Получить данные пользователя по его user_id.
 
@@ -40,9 +41,9 @@ class UsersGatewayHTTPClient(HTTPClient):
         """
         return self.post("/api/v1/users", json=request.model_dump())
 
-    def get_user(self, user_id: str) -> GetUserResponseSchema:
+    def get_user(self, user_id: str | UUID) -> GetUserResponseSchema:
         response = self.get_user_api(user_id)
-        return response.json()
+        return GetUserResponseSchema.model_validate_json(response.text)
 
     def create_user(self) -> CreateUserResponseSchema:
         # Генерация данных теперь происходит внутри схемы запроса

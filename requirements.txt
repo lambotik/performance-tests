@@ -36,3 +36,4 @@ certifi~=2026.7.22
 anyio~=4.14.2
 grpc_requests~=0.1.21
 termcolor~=3.3.0
+locust~=2.46.6
