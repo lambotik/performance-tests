@@ -65,7 +65,7 @@ def build_documents_gateway_grpc_client() -> DocumentsGatewayGRPCClient:
     """
     return DocumentsGatewayGRPCClient(channel=build_gateway_grpc_client())
 
-def build_accounts_gateway_locust_grpc_client(environment: Environment) -> DocumentsGatewayGRPCClient:
+def build_documents_gateway_locust_grpc_client(environment: Environment) -> DocumentsGatewayGRPCClient:
     """
     Функция создаёт экземпляр AccountsGatewayGRPCClient адаптированного под Locust.
 

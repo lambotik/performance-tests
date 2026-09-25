@@ -240,7 +240,7 @@ def build_operations_gateway_http_client() -> OperationsGatewayHTTPClient:
 
 
 # Новый билдер для нагрузочного тестирования
-def build_operation_gateway_locust_http_client(environment: Environment) -> OperationsGatewayHTTPClient:
+def build_operations_gateway_locust_http_client(environment: Environment) -> OperationsGatewayHTTPClient:
     """
     Функция создаёт экземпляр OperationsGatewayHTTPClient адаптированного под Locust.
 

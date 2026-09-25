@@ -257,7 +257,7 @@ def build_operations_gateway_grpc_client() -> OperationsGatewayGRPCClient:
     return OperationsGatewayGRPCClient(channel=build_gateway_grpc_client())
 
 
-def build_accounts_gateway_locust_grpc_client(environment: Environment) -> OperationsGatewayGRPCClient:
+def build_operations_gateway_locust_grpc_client(environment: Environment) -> OperationsGatewayGRPCClient:
     """
     Функция создаёт экземпляр AccountsGatewayGRPCClient адаптированного под Locust.
 

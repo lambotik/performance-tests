@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from httpx import Response
 from locust.env import Environment
 
@@ -14,7 +16,7 @@ class DocumentsGatewayHTTPClient(HTTPClient):
     Клиент для взаимодействия с /api/v1/documents сервиса http-gateway.
     """
 
-    def get_tariff_document_api(self, account_id: str) -> Response:
+    def get_tariff_document_api(self, account_id: str | UUID) -> Response:
         """
         Получить тарифа по счету.
 
@@ -27,7 +29,7 @@ class DocumentsGatewayHTTPClient(HTTPClient):
             extensions=HTTPClientExtensions(route="/api/v1/documents/tariff-document/{account_id}")
         )
 
-    def get_contract_document_api(self, account_id: str) -> Response:
+    def get_contract_document_api(self, account_id: str | UUID) -> Response:
         """
         Получить контракта по счету.
 
@@ -40,11 +42,11 @@ class DocumentsGatewayHTTPClient(HTTPClient):
             extensions=HTTPClientExtensions(route="/api/v1/documents/contract-document/{account_id}")
         )
 
-    def get_tariff_document(self, account_id: str) -> GetTariffDocumentResponseSchema:
+    def get_tariff_document(self, account_id: str | UUID) -> GetTariffDocumentResponseSchema:
         response = self.get_tariff_document_api(account_id)
         return GetTariffDocumentResponseSchema.model_validate_json(response.text)
 
-    def get_contract_document(self, account_id: str) -> GetContractDocumentResponseSchema:
+    def get_contract_document(self, account_id: str | UUID) -> GetContractDocumentResponseSchema:
         response = self.get_contract_document_api(account_id)
         return GetContractDocumentResponseSchema.model_validate_json(response.text)
 
