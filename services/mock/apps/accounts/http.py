@@ -21,7 +21,7 @@ accounts_mock_router = APIRouter(
 
 @accounts_mock_router.get('', response_model=GetAccountsResponseSchema)
 async def get_accounts_view():
-    return await loader.load_http_with_timeout("get_accounts/default.json", GetAccountsResponseSchema)
+    return await loader.load_http_with_timeout("new_user_get_accounts/default.json", GetAccountsResponseSchema)
 
 
 @accounts_mock_router.get('/{account_id}', response_model=GetAccountResponseSchema)
