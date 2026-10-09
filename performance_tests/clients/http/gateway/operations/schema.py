@@ -67,7 +67,7 @@ class GetOperationsQuerySchema(BaseModel):
     """
     model_config = ConfigDict(populate_by_name=True)
 
-    account_id: str = Field(alias="accountId")
+    account_id: str | UUID = Field(alias="accountId")
 
 
 class GetOperationsResponseSchema(BaseModel):
@@ -83,7 +83,7 @@ class GetOperationsSummaryQuerySchema(BaseModel):
     """
     model_config = ConfigDict(populate_by_name=True)
 
-    account_id: str = Field(alias="accountId")
+    account_id: str | UUID = Field(alias="accountId")
 
 
 class GetOperationsSummaryResponseSchema(BaseModel):

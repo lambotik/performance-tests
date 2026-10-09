@@ -1,4 +1,5 @@
 import uuid
+from enum import Enum
 from uuid import UUID
 
 from pydantic import BaseModel, Field, ConfigDict
@@ -10,11 +11,25 @@ class Account(BaseModel):
     """Схема счёта."""
     model_config = ConfigDict(populate_by_name=True)
 
-    id: uuid.UUID = Field(..., description="Account identifier")
+    id: str | UUID = Field(..., description="Account identifier")
     type: str = Field(..., description="Account type")
     cards: list[CardSchema] = Field(..., description="List of cards")
     status: str = Field(..., description="Account status")
     balance: float = Field(..., description="Account balance")
+
+class AccountTypeEnum(str, Enum):
+    UNSPECIFIED = "UNSPECIFIED"
+    DEBIT_CARD = "DEBIT_CARD"
+    CREDIT_CARD = "CREDIT_CARD"
+    DEPOSIT = "DEPOSIT"
+    SAVINGS = "SAVINGS"
+
+
+class AccountStatusEnum(str, Enum):
+    UNSPECIFIED = "UNSPECIFIED"
+    ACTIVE = "ACTIVE"
+    PENDING_CLOSURE = "PENDING_CLOSURE"
+    CLOSED = "CLOSED"
 
 
 class GetAccountsQuerySchema(BaseModel):
@@ -54,6 +69,13 @@ class OpenDebitCardAccountRequestSchema(BaseModel):
     """
     model_config = ConfigDict(populate_by_name=True)
     user_id: str | UUID = Field(..., alias="userId", description="User Id")
+
+
+class OpenDebitCardAccountResponseSchema(BaseModel):
+    """
+    Структура данных ответа на открытие дебетового счета.
+    """
+    account: Account = Field(..., description="Account details")
 
 
 class OpenCreditCardAccountRequestSchema(BaseModel):

@@ -38,7 +38,7 @@ class OperationsGatewayHTTPClient(HTTPClient):
         Клиент для взаимодействия с /api/v1/operations сервиса http-gateway.
         """
 
-    def get_operation_api(self, operation_id: str) -> Response:
+    def get_operation_api(self, operation_id: str | UUID) -> Response:
         """
         Получает информацию об операции по её идентификатору.
 
@@ -50,7 +50,7 @@ class OperationsGatewayHTTPClient(HTTPClient):
             extensions=HTTPClientExtensions(route="/api/v1/operations/{operation_id}")
         )
 
-    def get_operation_receipt_api(self, operation_id: str) -> Response:
+    def get_operation_receipt_api(self, operation_id: str | UUID) -> Response:
         """
         Получает чек по заданной операции.
 
@@ -172,11 +172,11 @@ class OperationsGatewayHTTPClient(HTTPClient):
             json=request.model_dump(mode='json', by_alias=True)
         )
 
-    def get_operation(self, operation_id: str) -> GetOperationResponseSchema:
+    def get_operation(self, operation_id: str | UUID) -> GetOperationResponseSchema:
         response = self.get_operation_api(operation_id)
         return GetOperationResponseSchema.model_validate_json(response.text)
 
-    def get_operation_receipt(self, operation_id: str) -> GetOperationReceiptResponseSchema:
+    def get_operation_receipt(self, operation_id: str | UUID) -> GetOperationReceiptResponseSchema:
         response = self.get_operation_receipt_api(operation_id)
         return GetOperationReceiptResponseSchema.model_validate_json(response.text)
 
