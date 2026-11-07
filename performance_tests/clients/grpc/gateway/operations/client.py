@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from grpc import Channel
 from locust.env import Environment
 
@@ -168,11 +170,11 @@ class OperationsGatewayGRPCClient(GRPCClient):
         return self.stub.MakeCashWithdrawalOperation(request)
 
     def get_operation(self, operation_id: str) -> GetOperationResponse:
-        request = GetOperationRequest(id=operation_id)
+        request = GetOperationRequest(id=str(operation_id))
         return self.get_operation_api(request)
 
     def get_operation_receipt(self, operation_id: str) -> GetOperationReceiptResponse:
-        request = GetOperationReceiptRequest(operation_id=operation_id)
+        request = GetOperationReceiptRequest(operation_id=str(operation_id))
         return self.get_operation_receipt_api(request)
 
     def get_operations(self, account_id: str) -> GetOperationsResponse:

@@ -182,7 +182,7 @@ services:
     image: prom/prometheus
     ports: [ "9090:9090" ]
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     restart: always
     container_name: prometheus
 
@@ -269,6 +269,15 @@ services:
     ports: [ "9006:9006" ]
     command: "services.operations.server.grpc"
     container_name: "grpc-operations"
+
+  docker-stats-exporter:
+    image: gregmika/docker_stats_exporter:latest
+    container_name: docker-stats-exporter
+    ports:
+      - "9273:9273"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
 
 volumes:
   pgdata:
