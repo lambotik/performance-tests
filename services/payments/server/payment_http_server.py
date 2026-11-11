@@ -14,7 +14,7 @@ app.include_router(payments_mock_router)
 if __name__ == "__main__":
     host = "0.0.0.0"
     port = 8007
-    print('Swagger:', f'http://{host}:{port}/docs')
+    print(f'Swagger: http://{host}:{port}/docs')
     uvicorn.run(
         app="services.payments.server.payment_http_server:app",  # путь до приложения (используется при reload/workers)
         host=host,  # слушаем все интерфейсы (важно для Docker)
