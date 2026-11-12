@@ -16,7 +16,7 @@ if __name__ == "__main__":
     port = 8007
     print(f'Swagger: http://{host}:{port}/docs')
     uvicorn.run(
-        app="services.payments.server.payment_http_server:app",  # путь до приложения (используется при reload/workers)
+        app="services.payments.server.http:app",  # путь до приложения (используется при reload/workers)
         host=host,  # слушаем все интерфейсы (важно для Docker)
         port=8007,  # тот самый порт, на котором ждут payments-service
         workers=3  # можно обрабатывать несколько запросов параллельно

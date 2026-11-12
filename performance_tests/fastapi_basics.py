@@ -63,7 +63,6 @@ async def register_user(
         "age": user.age
     }
 
-
 app.include_router(router)
 
 if __name__ == "__main__":

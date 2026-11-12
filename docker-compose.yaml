@@ -270,6 +270,19 @@ services:
     command: "services.operations.server.grpc"
     container_name: "grpc-operations"
 
+  # payments-service
+  http-payments: # Добавили новый сервис
+    <<: *python-service
+    ports: [ "8007:8007" ]
+    command: "services.payments.server.http"
+    container_name: "http-payments"
+
+  grpc-payments:
+    <<: *python-service
+    ports: [ "9007:9007" ]
+    command: "services.payments.server.grpc"
+    container_name: "grpc-payments"
+
   docker-stats-exporter:
     image: gregmika/docker_stats_exporter:latest
     container_name: docker-stats-exporter
